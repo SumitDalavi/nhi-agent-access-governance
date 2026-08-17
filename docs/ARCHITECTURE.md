@@ -1,5 +1,17 @@
 # Non-Human Identity (NHI) Architecture
 
+## System Diagram
+The following Mermaid.js sequence diagram maps the core workflow and interactions:
+
+```mermaid
+sequenceDiagram
+    Agent->>ControlPlane: Request Access
+ControlPlane->>Policy: Evaluate
+ControlPlane->>Vault: Issue short-lived credential
+Vault-->>Agent: Token
+```
+
+
 Traditional Identity and Access Management (IAM) has focused almost entirely on human users (e.g., SSO, MFA, active directory). However, with the rise of AI agents, CI/CD bots, and programmatic access (e.g., via MCP Servers), a new challenge has emerged: Governing Non-Human Identities (NHI).
 
 ## The NHI Lifecycle Model
