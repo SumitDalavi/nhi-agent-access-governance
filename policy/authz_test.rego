@@ -1,19 +1,23 @@
-package authz
+package nhi.authz_test
 
-import data.authz.allow
+import data.nhi.authz.allow
 
-test_allow_admin {
-    allow with input as {"user": {"role": "admin"}}
+test_allow_exact_match {
+    allow with input as {"scopes": ["read:secrets"], "action": "read", "resource": "secrets"}
 }
 
-test_deny_regular_user {
-    not allow with input as {"user": {"role": "user"}}
+test_deny_mismatch {
+    not allow with input as {"scopes": ["read:secrets"], "action": "write", "resource": "secrets"}
 }
 
-test_allow_agent_service {
-    allow with input as {"user": {"role": "agent-service", "status": "active"}}
+test_allow_wildcard_resource {
+    allow with input as {"scopes": ["read:*"], "action": "read", "resource": "users"}
 }
 
-test_deny_inactive_agent_service {
-    not allow with input as {"user": {"role": "agent-service", "status": "inactive"}}
+test_allow_wildcard_action {
+    allow with input as {"scopes": ["*:secrets"], "action": "delete", "resource": "secrets"}
+}
+
+test_allow_admin_wildcard {
+    allow with input as {"scopes": ["*:*"], "action": "destroy", "resource": "everything"}
 }
