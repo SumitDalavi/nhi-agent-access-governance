@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { query } from '../db';
 import axios from 'axios';
+import crypto from 'crypto';
 
 const router = Router();
 
@@ -16,9 +17,13 @@ router.post('/evaluate', async (req, res) => {
     }
     const nhi = nhiResult.rows[0];
 
+    if (nhi.status !== 'ACTIVE') {
+      const reason = 'Denied by policy: NHI is not active';
+      await logAudit(nhi_id, action, resource, false, reason);
+      return res.json({ allowed: false, reason });
+    }
+
     // 2. Query OPA for policy decision
-    // In a real environment, you might just send the input and OPA fetches the data, 
-    // or you pass the scopes in the input. Here we pass the scopes.
     const opaInput = {
       input: {
         action,
@@ -40,11 +45,7 @@ router.post('/evaluate', async (req, res) => {
     }
 
     // 3. Log the decision
-    await query(
-      `INSERT INTO audit_logs (nhi_id, action, resource, allowed, reason) 
-       VALUES ($1, $2, $3, $4, $5)`,
-      [nhi_id, action, resource, allowed, reason]
-    );
+    await logAudit(nhi_id, action, resource, allowed, reason);
 
     res.json({ allowed, reason });
   } catch (err) {
@@ -52,5 +53,20 @@ router.post('/evaluate', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+async function logAudit(nhi_id: number, action: string, resource: string, allowed: boolean, reason: string) {
+  // Fetch the last hash to chain it
+  const lastLogResult = await query('SELECT hash FROM audit_logs ORDER BY id DESC LIMIT 1');
+  const previous_hash = lastLogResult.rows.length > 0 ? lastLogResult.rows[0].hash : '0'.repeat(64);
+
+  const payload = `${previous_hash}|${nhi_id}|${action}|${resource}|${allowed}|${reason}`;
+  const hash = crypto.createHash('sha256').update(payload).digest('hex');
+
+  await query(
+    `INSERT INTO audit_logs (nhi_id, action, resource, allowed, reason, previous_hash, hash) 
+     VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+    [nhi_id, action, resource, allowed, reason, previous_hash, hash]
+  );
+}
 
 export default router;

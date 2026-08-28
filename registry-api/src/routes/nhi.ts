@@ -30,11 +30,14 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Delete an NHI (Revoke)
+// Revoke an NHI (Soft Delete)
 router.delete('/:id', async (req, res) => {
   const { id } = req.params;
   try {
-    await query('DELETE FROM nhis WHERE id = $1', [id]);
+    const { rowCount } = await query("UPDATE nhis SET status = 'REVOKED' WHERE id = $1", [id]);
+    if (rowCount === 0) {
+      return res.status(404).json({ error: 'NHI not found' });
+    }
     res.status(204).send();
   } catch (err) {
     console.error(err);

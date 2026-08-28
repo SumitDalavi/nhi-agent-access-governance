@@ -112,11 +112,13 @@ describe('Registry API Integration Tests', () => {
     expect(lastAudit.allowed).toBe(false);
   });
 
-  it('should revoke (delete) an NHI', async () => {
+  it('should revoke (soft delete) an NHI', async () => {
     const res = await request(app).delete(`/api/nhis/${testNhiId}`);
     expect(res.status).toBe(204);
 
     const checkRes = await request(app).get('/api/nhis');
-    expect(checkRes.body.some((nhi: any) => nhi.id === testNhiId)).toBeFalsy();
+    const revokedNhi = checkRes.body.find((nhi: any) => nhi.id === testNhiId);
+    expect(revokedNhi).toBeDefined();
+    expect(revokedNhi.status).toBe('REVOKED');
   });
 });

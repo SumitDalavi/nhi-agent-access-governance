@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface NHI {
   id: number;
@@ -7,6 +7,7 @@ interface NHI {
   purpose: string;
   scopes: string[];
   credential_type: string;
+  status: string;
   expires_at: string;
   created_at: string;
 }
@@ -19,6 +20,7 @@ interface AuditLog {
   resource: string;
   allowed: boolean;
   reason: string;
+  hash: string;
   timestamp: string;
 }
 
@@ -75,7 +77,10 @@ function App() {
                 <div key={nhi.id} className="border rounded-md p-4 bg-gray-50">
                   <div className="flex justify-between items-start">
                     <div>
-                      <h3 className="font-bold text-lg text-indigo-700">{nhi.name}</h3>
+                      <h3 className="font-bold text-lg text-indigo-700">
+                        {nhi.name}
+                        {nhi.status === 'REVOKED' && <span className="ml-2 text-xs bg-red-100 text-red-800 px-2 py-1 rounded">REVOKED</span>}
+                      </h3>
                       <p className="text-sm text-gray-600">Owner: {nhi.owner}</p>
                     </div>
                     <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
@@ -106,7 +111,9 @@ function App() {
                 <div key={log.id} className={`border-l-4 p-3 rounded bg-gray-50 shadow-sm ${log.allowed ? 'border-green-500' : 'border-red-500'}`}>
                   <div className="flex justify-between items-center mb-1">
                     <span className="font-semibold text-gray-800">{log.nhi_name || 'Unknown'}</span>
-                    <span className="text-xs text-gray-500">{new Date(log.timestamp).toLocaleTimeString()}</span>
+                    <span className="text-xs text-gray-500" title={`Hash: ${log.hash}`}>
+                      {new Date(log.timestamp).toLocaleTimeString()}
+                    </span>
                   </div>
                   <div className="text-sm">
                     <span className="text-gray-600">Action:</span> <code className="bg-gray-200 px-1 rounded">{log.action}</code>
@@ -116,7 +123,7 @@ function App() {
                     <span className={log.allowed ? 'text-green-600 font-medium' : 'text-red-600 font-medium'}>
                       {log.allowed ? 'ALLOWED' : 'DENIED'}
                     </span>
-                    <span className="text-gray-500 text-xs italic">{log.reason}</span>
+                    <span className="text-gray-500 text-xs italic">{log.reason} {log.hash && `(Hash: ${log.hash.substring(0, 8)})`}</span>
                   </div>
                 </div>
               ))}
