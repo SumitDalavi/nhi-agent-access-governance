@@ -10,15 +10,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-node@v4
         with:
-          python-version: '3.11'
+          node-version: '20'
+      - name: Start Services
+        run: docker compose up -d postgres opa
       - name: Install Dependencies
+        working-directory: registry-api
+        run: npm ci
+      - name: Wait for Services
         run: |
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          sleep 10
       - name: Run Tests
-        run: |
-          if [ -f requirements.txt ] && pip show pytest &>/dev/null; then
-            pytest tests/ -v --tb=short || true
-          fi
-          echo "CI completed successfully"
+        working-directory: registry-api
+        run: npm test
+      - name: Stop Services
+        run: docker compose down
