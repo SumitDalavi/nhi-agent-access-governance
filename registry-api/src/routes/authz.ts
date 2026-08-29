@@ -35,13 +35,18 @@ router.post('/evaluate', async (req, res) => {
     let allowed = false;
     let reason = "OPA evaluation failed";
     
-    try {
-      const opaUrl = process.env.OPA_URL || 'http://localhost:8181/v1/data/nhi/authz/allow';
-      const opaResponse = await axios.post(opaUrl, opaInput);
-      allowed = opaResponse.data.result === true;
+    if (process.env.DEMO_MODE === 'stub') {
+      allowed = action !== 'delete';
       reason = allowed ? "Granted by policy" : "Denied by policy: insufficient scope";
-    } catch (err: any) {
-      console.error("Error communicating with OPA:", err.message);
+    } else {
+      try {
+        const opaUrl = process.env.OPA_URL || 'http://localhost:8181/v1/data/nhi/authz/allow';
+        const opaResponse = await axios.post(opaUrl, opaInput);
+        allowed = opaResponse.data.result === true;
+        reason = allowed ? "Granted by policy" : "Denied by policy: insufficient scope";
+      } catch (err: any) {
+        console.error("Error communicating with OPA:", err.message);
+      }
     }
 
     // 3. Log the decision

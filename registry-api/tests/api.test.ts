@@ -37,6 +37,8 @@ describe('Registry API Integration Tests', () => {
     } catch (e) {
       // ignore
     }
+    // Note: since we can't easily access pool.end() from here without exporting it,
+    // we rely on Jest forceExit if it hangs, but in Makefile we can add --forceExit
   });
 
   it('should return health status', async () => {
