@@ -27,6 +27,13 @@ jobs:
             fi
             sleep 2
           done
+          for i in {1..30}; do
+            if curl -s http://localhost:8181/ > /dev/null; then
+              echo "OPA is ready"
+              break
+            fi
+            sleep 2
+          done
       - name: Run Tests
         working-directory: registry-api
         env:
