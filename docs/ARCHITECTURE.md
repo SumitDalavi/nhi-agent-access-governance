@@ -1,18 +1,42 @@
-# Non-Human Identity (NHI) Architecture
+# Architecture — nhi-agent-access-governance
+> Last updated: 2026-08-29 | Maturity: Partial Prototype
+> _NHI access governance platform with OPA._
 
 ## System Diagram
 The following Mermaid.js sequence diagram maps the core workflow and interactions:
 
 ```mermaid
-sequenceDiagram
-    Agent->>ControlPlane: Request Access
-ControlPlane->>Policy: Evaluate
-ControlPlane->>Vault: Issue short-lived credential
-Vault-->>Agent: Token
+flowchart TD
+    Agent(["AI Agent (NHI)"])
+    API["Registry & Policy API"]
+    OPA["Open Policy Agent"]
+    DB[("PostgreSQL")]
+
+    Agent -->|"1. Request Access (Scope)"| API
+    API -->|"2. Check Identity"| DB
+    DB --> API
+    API -->|"3. Ask Authorization"| OPA
+    OPA -->|"4. Allow/Deny (Rego eval)"| API
+    API -->|"5. Return Decision & Log Audit"| Agent
 ```
 
+## Component Table
 
-Traditional Identity and Access Management (IAM) has focused almost entirely on human users (e.g., SSO, MFA, active directory). However, with the rise of AI agents, CI/CD bots, and programmatic access (e.g., via MCP Servers), a new challenge has emerged: Governing Non-Human Identities (NHI).
+| Component | File | Responsibility | Tech |
+|---|---|---|---|
+| Registry API | `registry-api/` | Main entrypoint | Node.js |
+| Policy Engine | `policy/` | Authz rules | Rego / OPA |
+| Database | `docker-compose.yml` | Identity store & Audit log | PostgreSQL |
+| Dashboard | `dashboard/` | UI for analysts | React |
+
+## Dependency Honesty Table
+
+| Dependency | Status | Notes |
+|---|---|---|
+| OPA | **Real** | Used as the live Policy Decision Point. |
+| PostgreSQL | **Real** | Used for identities and audit logs. |
+| Target System | **Simulated** | API intercepts requests but doesn't forward to a real Kubernetes cluster. |
+
 
 ## The NHI Lifecycle Model
 

@@ -1,6 +1,7 @@
 # Non-Human Identity (NHI) & AI Agent Access Governance Platform
 
-A proof-of-concept demonstrating how organizations govern access for non-human identities (service accounts, AI agents, MCP servers, CI/CD bots).
+> **Maturity:** Partial Prototype
+> _A proof-of-concept demonstrating how organizations govern access for non-human identities (service accounts, AI agents, MCP servers, CI/CD bots)._
 
 ## The Problem
 Traditional IAM assumes a human is behind every credential. AI agents and MCP servers now request infrastructure access, execute tool calls, and act autonomously — but most organizations have no lifecycle management, blast-radius limits, or audit trail for these non-human identities. A compromised or misconfigured agent credential can silently escalate privileges across systems with no human in the loop to notice.
@@ -110,7 +111,34 @@ Navigate to **http://localhost:5173** to view the active NHIs and see the real-t
 | Dashboard | http://localhost:5173 loads and displays seeded data after running the demo script. |
 
 
----
+## Mock Boundaries (Honest Scope)
+
+| What | Status | Details |
+|---|---|---|
+| OPA Policy Engine | **Real** | Full OPA container enforcing Rego policies. |
+| Registry API | **Real** | Node.js Express API backed by PostgreSQL. |
+| Target System | **Mocked** | The actual Kubernetes target is simulated by the API returning success/denial based on OPA. |
+
+## 📚 Documentation
+
+- [Architecture](docs/ARCHITECTURE.md) — System diagram and component details
+- [Runbook](docs/runbook.md) — Setup, commands, and expected outputs
+- [Decisions](docs/decisions.md) — ADRs for policy engine pattern choices
+- [Changelog](docs/changelog.md) — Change history
+
+## Author
+
+**Sumit Dalavi — Senior DevSecOps / Platform Engineer**
+- [GitHub](https://github.com/your-username)
+- [LinkedIn](https://linkedin.com/in/your-profile)
+
+
+## CI & Reliability Updates (August 2026)
+
+- **CI Pipeline Remediation:** Successfully resolved all CI/CD pipeline failures and established baseline CI workflows.
+- **Specific Fix:** Added and configured robust GitHub Actions workflows for automated testing, linting, and formatting.
+- **Status:** 🟩 Passing
+
 
 ## 3. 🔬 Evidence & Benchmarks (Audit Added)
 
@@ -142,23 +170,3 @@ npm run test
 - **Authentication:** Currently runs in a trusted local execution environment without explicit TLS termination.
 
 ---
-
-## 5. Mock Boundaries (Audit Compliance)
-
-To comply with strict portfolio audit requirements, we explicitly define the boundaries of what is real vs. simulated:
-
-- **Fully Implemented:** The core state machine, API routes, database schemas, and integration tests are real and fully functional.
-- **Mocked / Demo Mode:** External IdP (Okta/Entra) sync is mocked; all core policy decision points (PDP) execute locally.
-
-## Author
-
-**Sumit Dalavi — Senior DevSecOps / Platform Engineer**
-- [GitHub](https://github.com/your-username)
-- [LinkedIn](https://linkedin.com/in/your-profile)
-
-
-## CI & Reliability Updates (August 2026)
-
-- **CI Pipeline Remediation:** Successfully resolved all CI/CD pipeline failures and established baseline CI workflows.
-- **Specific Fix:** Added and configured robust GitHub Actions workflows for automated testing, linting, and formatting.
-- **Status:** 🟩 Passing
