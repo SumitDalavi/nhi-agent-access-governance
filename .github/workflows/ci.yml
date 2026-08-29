@@ -28,9 +28,14 @@ jobs:
             sleep 2
           done
           for i in {1..30}; do
-            if curl -s http://localhost:8181/ > /dev/null; then
+            if curl -s http://localhost:8181/health > /dev/null; then
               echo "OPA is ready"
               break
+            fi
+            if [ $i -eq 30 ]; then
+              echo "OPA failed to start"
+              docker compose logs opa
+              exit 1
             fi
             sleep 2
           done
