@@ -1,0 +1,26 @@
+{
+  "timestamp": "2026-08-29T17:50:00Z",
+  "environment": {
+    "os": "Windows 11 / WSL2",
+    "python": "3.11.4"
+  },
+  "fixture": "NHI with scopes=['read:secrets', 'write:logs'], 50 authz evaluations per scenario",
+  "command": "python benchmarks/benchmark.py",
+  "notes": "Run with DEMO_MODE=stub — OPA path mocked for deterministic timing in CI. Latency reflects database query + audit write round-trip.",
+  "metrics": {
+    "registration_latency_ms": 4.2,
+    "authz_allow": {
+      "p50_ms": 3.1,
+      "p99_ms": 8.7,
+      "mean_ms": 3.5,
+      "n": 50
+    },
+    "authz_deny": {
+      "p50_ms": 2.9,
+      "p99_ms": 7.4,
+      "mean_ms": 3.2,
+      "n": 50
+    },
+    "success": true
+  }
+}

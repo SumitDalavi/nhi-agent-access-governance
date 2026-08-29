@@ -2,20 +2,47 @@ version: '3.8'
 
 services:
   postgres-test:
-    image: postgres:15
+    image: postgres:15-alpine
     environment:
-      POSTGRES_USER: nhidb
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: nhidb_test
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
+      POSTGRES_DB: nhi_registry_test
     ports:
       - "5433:5432"
     volumes:
-      - postgres_test_data:/var/lib/postgresql/data
+      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U nhidb -d nhidb_test"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d nhi_registry_test"]
       interval: 5s
       timeout: 5s
       retries: 5
 
-volumes:
-  postgres_test_data:
+  opa-test:
+    image: openpolicyagent/opa:0.68.0-debug
+    ports:
+      - "8182:8181"
+    command:
+      - "run"
+      - "--server"
+      - "--log-level=debug"
+      - "/policy"
+    volumes:
+      - ./policy:/policy
+
+  registry-api-test:
+    build: 
+      context: ./registry-api
+      dockerfile: Dockerfile
+    ports:
+      - "3002:3001"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
+      POSTGRES_DB: nhi_registry_test
+      POSTGRES_HOST: postgres-test
+      OPA_URL: http://opa-test:8181/v1/data/nhi/authz/allow
+    depends_on:
+      postgres-test:
+        condition: service_healthy
+      opa-test:
+        condition: service_started
