@@ -17,12 +17,12 @@ jobs:
         run: docker compose up -d postgres opa
       - name: Install Dependencies
         working-directory: registry-api
-        run: cd registry-api && npm ci
+        run: npm ci
       - name: Wait for Services
         run: |
           sleep 10
       - name: Run Tests
         working-directory: registry-api
-        run: cd registry-api && npm test
+        run: npm test
       - name: Stop Services
         run: docker compose down
