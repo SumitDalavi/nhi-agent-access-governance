@@ -25,6 +25,11 @@ jobs:
               echo "Postgres is ready"
               break
             fi
+            if [ $i -eq 30 ]; then
+              echo "Postgres failed to start"
+              docker compose logs postgres
+              exit 1
+            fi
             sleep 2
           done
           for i in {1..30}; do
@@ -45,4 +50,5 @@ jobs:
           POSTGRES_PASSWORD: postgrespassword
         run: npm test
       - name: Stop Services
+        if: always()
         run: docker compose down

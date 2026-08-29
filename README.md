@@ -1,6 +1,6 @@
 # Non-Human Identity (NHI) & AI Agent Access Governance Platform
 
-> **Maturity:** Partial Prototype
+> **Maturity:** Functional Prototype
 > _A proof-of-concept demonstrating how organizations govern access for non-human identities (service accounts, AI agents, MCP servers, CI/CD bots)._
 
 ## The Problem
