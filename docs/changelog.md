@@ -1,5 +1,13 @@
 # Changelog
 
+## [Unreleased] - 2026-08-30
+
+### Added/Fixed (Phase 6 Functional Upgrades)
+- Added policy evaluation benchmark scripts (`benchmark.py`) for latency tracking.
+- Included benchmark results JSON (P50/P99 latency for allow/deny decisions).
+- Updated README with benchmark execution instructions and latest metrics.
+- Added GitHub Actions CI status badge.
+
 ## [2026-08-29] — Phase 2 Evidence
 ### Added
 - Added `docker-compose.test.yml` to start PostgreSQL specifically for testing.
