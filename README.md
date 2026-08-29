@@ -1,5 +1,7 @@
 # Non-Human Identity (NHI) & AI Agent Access Governance Platform
 
+[![CI](https://github.com/SumitDalavi/nhi-agent-access-governance/actions/workflows/ci.yml/badge.svg)](https://github.com/SumitDalavi/nhi-agent-access-governance/actions/workflows/ci.yml)
+
 > **Maturity:** Functional Prototype
 > _A proof-of-concept demonstrating how organizations govern access for non-human identities (service accounts, AI agents, MCP servers, CI/CD bots)._
 
