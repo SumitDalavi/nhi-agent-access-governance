@@ -1,10 +1,10 @@
 # Non-Human Identity (NHI) & AI Agent Access Governance Platform
 
-[![Release](https://img.shields.io/github/v/release/SumitDalavi/nhi-agent-access-governance)](https://github.com/SumitDalavi/nhi-agent-access-governance/releases)
+[![CI Pipeline](https://github.com/SumitDalavi/nhi-agent-access-governance/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/SumitDalavi/nhi-agent-access-governance/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/SumitDalavi/nhi-agent-access-governance?color=0969da&label=release&logo=github)](https://github.com/SumitDalavi/nhi-agent-access-governance/releases)
 [![Release Workflow](https://github.com/SumitDalavi/nhi-agent-access-governance/actions/workflows/release.yml/badge.svg)](https://github.com/SumitDalavi/nhi-agent-access-governance/actions/workflows/release.yml)
-
-
-[![CI](https://github.com/SumitDalavi/nhi-agent-access-governance/actions/workflows/ci.yml/badge.svg)](https://github.com/SumitDalavi/nhi-agent-access-governance/actions/workflows/ci.yml)
+[![SBOM](https://img.shields.io/badge/SBOM-SPDX%202.3-blueviolet?logo=spdx)](https://github.com/SumitDalavi/nhi-agent-access-governance/releases/tag/v0.2.0)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
 > **Maturity:** Functional Prototype
 > _A proof-of-concept demonstrating how organizations govern access for non-human identities (service accounts, AI agents, MCP servers, CI/CD bots)._
