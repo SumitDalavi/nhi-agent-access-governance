@@ -1,0 +1,81 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Release Catalog & Policy Distribution
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Start Services
+        run: docker compose up -d postgres opa
+
+      - name: Install Dependencies
+        working-directory: registry-api
+        run: npm ci
+
+      - name: Wait for Services
+        run: |
+          for i in {1..30}; do
+            if docker compose exec postgres pg_isready -U postgres; then
+              echo "Postgres is ready"
+              break
+            fi
+            sleep 2
+          done
+          for i in {1..30}; do
+            if curl -s http://localhost:8181/health > /dev/null; then
+              echo "OPA is ready"
+              break
+            fi
+            sleep 2
+          done
+
+      - name: Run Tests
+        working-directory: registry-api
+        env:
+          POSTGRES_PASSWORD: postgrespassword
+        run: npm test
+
+      - name: Stop Services
+        if: always()
+        run: docker compose down
+
+      - name: Package Release Distribution Bundle
+        run: |
+          ARCHIVE_NAME="${{ github.event.repository.name }}-${{ github.ref_name }}.tar.gz"
+          tar --exclude='.git' --exclude='.github' --exclude='node_modules' --exclude='venv' --exclude='.venv' --exclude='__pycache__' --exclude='.terraform' -czf "/tmp/$ARCHIVE_NAME" .
+          mv "/tmp/$ARCHIVE_NAME" .
+          sha256sum "$ARCHIVE_NAME" > checksums.txt
+          echo "Package created: $ARCHIVE_NAME"
+          ls -lh "$ARCHIVE_NAME" checksums.txt
+
+      - name: Generate Source SBOM
+        uses: anchore/sbom-action@v0
+        with:
+          path: ./
+          format: spdx-json
+          output-file: sbom.spdx.json
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: |
+            ${{ github.event.repository.name }}-*.tar.gz
+            checksums.txt
+            sbom.spdx.json
