@@ -6,8 +6,7 @@
 [![SBOM](https://img.shields.io/badge/SBOM-SPDX%202.3-blueviolet?logo=spdx)](https://github.com/SumitDalavi/nhi-agent-access-governance/releases/tag/v0.2.0)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
-> **Maturity:** Functional Prototype
-> _A proof-of-concept demonstrating how organizations govern access for non-human identities (service accounts, AI agents, MCP servers, CI/CD bots)._
+> A governance and runtime access control platform for non-human identities, AI agents, MCP servers, and automated pipelines.
 
 ## The Problem
 Traditional IAM assumes a human is behind every credential. AI agents and MCP servers now request infrastructure access, execute tool calls, and act autonomously — but most organizations have no lifecycle management, blast-radius limits, or audit trail for these non-human identities. A compromised or misconfigured agent credential can silently escalate privileges across systems with no human in the loop to notice.
